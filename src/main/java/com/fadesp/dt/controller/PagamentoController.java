@@ -1,5 +1,6 @@
 package com.fadesp.dt.controller;
 
+import java.io.Console;
 import java.util.List;
 import java.util.Optional;
 import jakarta.validation.Valid;
@@ -61,21 +62,22 @@ public class PagamentoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pagamento não encontrado.");
 		}
 		
-		var pagamentoAtualizado = pagamentoSelecionado.get();			
-		BeanUtils.copyProperties(pagamentoRecordDto, pagamentoAtualizado);
+		var pagamentoAtualizado = pagamentoSelecionado.get();
 		
-		/*if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PROCESSADO_SUCESSO) {
+		if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PENDENTE_PROCESSAMENTO &&      pagamentoRecordDto.statusPagamento() == StatusPagamentoEnum.PENDENTE_PROCESSAMENTO) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Este pagamento já está em processamento.");
+		}
+		else if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PROCESSADO_SUCESSO) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Este pagamento já foi processado e não pode mais ser alterado.");
 		}
-		else if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PENDENTE_PROCESSAMENTO && pagamentoRecordDto.statusPagamento() == StatusPagamentoEnum.PENDENTE_PROCESSAMENTO) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Este pagamento já está em processamento.");
-		} else if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PROCESSADO_FALHA && pagamentoRecordDto.statusPagamento() != StatusPagamentoEnum.PENDENTE_PROCESSAMENTO) {
+		else if(pagamentoSelecionado.get().getStatusPagamento() == StatusPagamentoEnum.PROCESSADO_FALHA && pagamentoRecordDto.statusPagamento() != StatusPagamentoEnum.PENDENTE_PROCESSAMENTO) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Este pagamento só pode ser alterado para pendente de processamento.");
 		}
 		
-		else return ResponseEntity.status(HttpStatus.OK).body(pagamentoRepository.save(pagamentoAtualizado));*/
-		
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(pagamentoSelecionado.get().getStatusPagamento()+"/"+pagamentoAtualizado.getStatusPagamento()+"/"+pagamentoRecordDto.statusPagamento());
+		else {
+			BeanUtils.copyProperties(pagamentoRecordDto, pagamentoAtualizado);
+			return ResponseEntity.status(HttpStatus.OK).body(pagamentoRepository.save(pagamentoAtualizado));
+		}
 	}
 	
 	@DeleteMapping("/{id}")
