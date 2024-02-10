@@ -36,9 +36,26 @@ public class PagamentoController {
 		return pagamentoRepository.findAll();
 	}
 	
-	@GetMapping("/listar/{id}")
-	public Optional<Pagamento> filtrarPorCodigoDebito(@PathVariable("id")Long id) {			
-		return pagamentoRepository.findById(id);
+	@GetMapping("/listar/{codigoDebito}")
+	public Optional<Pagamento> filtrarPorCodigoDebito(@PathVariable("codigoDebito")Integer codigoDebito) {
+		var pagamentosFiltrados = pagamentoRepository.filtrarPorCodigoDebito(codigoDebito);
+		
+		if(pagamentosFiltrados.isEmpty()) {
+			System.out.println("vazio");		
+		}
+		System.out.println(pagamentosFiltrados);
+		return pagamentosFiltrados;
+	}
+	
+	@GetMapping("/listar/{cpfCnpjPagador}")
+	public Optional<Pagamento> filtrarPorCpfCnpj(@PathVariable("cpfCnpjPagador")String cpfCnpjPagador) {
+		var pagamentosFiltrados = pagamentoRepository.filtrarPorCPFCNPJ(cpfCnpjPagador);
+		
+		if(pagamentosFiltrados.isEmpty()) {
+			System.out.println("vazio");		
+		}
+		System.out.println(pagamentosFiltrados);
+		return pagamentosFiltrados;
 	}
 	
 	@PostMapping	
